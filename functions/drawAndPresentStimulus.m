@@ -42,12 +42,14 @@ cnt = 1;
 
 colorlist = [];
 for i = 2:length(rsvp)
+    
 colors = [
     0   255 0;     % Green
     255 255 0;     % Yellow
     0   0   255;   % Blue
     255 0   0      % Red
 ];
+
     color1 = rsvp(t1Pos);
     switch color1
         case 'green'
