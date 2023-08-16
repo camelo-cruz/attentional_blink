@@ -41,6 +41,7 @@ t2s(1) = Screen('Flip', w, t1 + times.ISIafterFix);
 cnt = 1;
 
 colorlist = [];
+used_colors = [];
 for i = 2:length(rsvp)
 colors = [
     0   255 0;     % Green
@@ -72,32 +73,46 @@ colors = [
             color2 = colors(4, :);
     end
 
-    randomIndex = randi(size(colors, 1));
-    randomColor = colors(randomIndex, :);
-        if ~isempty(colorlist) && isequal(randomColor, colorlist(end, :))
-            while isequal(randomColor, colorlist(end, :))
-                randomIndex = randi(size(colors, 1));
-                randomColor = colors(randomIndex, :);
-            end
-        end
-        colorlist = [colorlist; randomColor];
+    randomColor = generateColor();
+
+    if ~isempty(colorlist) && isequal(randomColor, colorlist(end, :))
+       while isequal(randomColor, colorlist(end, :))
+           randomColor = generateColor();
+       end
+    end
+
+    colorlist = [colorlist; randomColor];
+        
 
 	if i == t1Pos
         if congruence
-		    Screen('DrawText', w, double(rsvp{i}), xchr, ychr, color1, const.bgcolor);
             colorlist = [colorlist; color1];
+		    Screen('DrawText', w, double(rsvp{i}), xchr, ychr, colorlist(end, :), const.bgcolor);
+        elseif isequal(color1, colorlist(end, :))
+            randomColor = generateColor();
+            colorlist = [colorlist; randomColor];
+            Screen('DrawText', w, double(rsvp{i}), xchr, ychr, colorlist(end, :), const.bgcolor);
         else
             Screen('DrawText', w, double(rsvp{i}), xchr, ychr, colorlist(end, :), const.bgcolor);
         end
     elseif i == t2Pos
+        if isequal(color2, colorlist(end, :))
+            randomColor = generateColor();
+            colorlist = [colorlist; randomColor];
+        end
         Screen('DrawText', w, double(rsvp{i}), xchr, ychr, colorlist(end, :), const.bgcolor);
     else
+        if length(colorlist) >= 2 && isequal(colorlist(end - 1), colorlist(end))
+            randomColor = generateColor();
+            colorlist = [colorlist; randomColor];
+        end
         Screen('DrawText', w, double(rsvp{i}), xchr, ychr, colorlist(end, :), const.bgcolor);
     end
 	t2s(cnt+1) = Screen('Flip', w, t2s(cnt) + times.Stim - deltat);
     t2s(cnt+2) = Screen('Flip', w, t2s(cnt+1) + times.ISI- deltat);
     cnt = cnt + 2;
 end
+disp(used_colors)
 Screen('FillRect', w, const.bgcolor, stimRect);
 t3 = Screen('Flip', w, t2s(end) + times.Stim - deltat);
 
