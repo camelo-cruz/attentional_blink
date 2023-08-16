@@ -75,7 +75,6 @@ try
 		writetable(design, resultFileName, 'Delimiter','\t');		
 	end
 	Priority(0);
-
 	Screen('CloseAll')
 	ListenChar(1);
 

@@ -41,7 +41,6 @@ t2s(1) = Screen('Flip', w, t1 + times.ISIafterFix);
 cnt = 1;
 
 colorlist = [];
-used_colors = [];
 for i = 2:length(rsvp)
 colors = [
     0   255 0;     % Green
@@ -112,7 +111,6 @@ colors = [
     t2s(cnt+2) = Screen('Flip', w, t2s(cnt+1) + times.ISI- deltat);
     cnt = cnt + 2;
 end
-disp(used_colors)
 Screen('FillRect', w, const.bgcolor, stimRect);
 t3 = Screen('Flip', w, t2s(end) + times.Stim - deltat);
 
