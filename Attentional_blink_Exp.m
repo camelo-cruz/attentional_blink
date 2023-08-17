@@ -1,5 +1,5 @@
 % Attentional blink experiment
-PsychDebugWindowConfiguration
+%PsychDebugWindowConfiguration
 Screen('Preference', 'SkipSyncTests', 2);
 try
 	addpath('functions');
@@ -54,8 +54,6 @@ try
 
 		times = drawAndPresentStimulus(w, screens, const, times, rsvp, t1Pos, t2Pos, t1congruent);
 
-% Here not worked----------------------------------------------
-
 		% ==============================
 		% = collect and score response =
 		% ==============================
@@ -66,7 +64,8 @@ try
 
 		[rt, R1, R2] = collectResponse(w, cx, cy, times.t3);
         Screen('FillRect', w, const.bgcolor);
-		Screen('Flip', w);       
+		Screen('Flip', w);
+% Here not worked----------------------------------------------
         design.R1(trial) = (R1);
         design.R2(trial) = (R2);
 		design.correct1(trial) = strcmp((R1), (T1));

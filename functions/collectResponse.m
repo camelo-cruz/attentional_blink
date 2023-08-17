@@ -1,78 +1,143 @@
-function [rt, response, response2] = collectResponse(w, cx, cy, t0)
-% waits for key in response set, returns response time and symbolic name
-% w: Haupt-Fenster
-% t0: Beginn der Präsentation letzter Reiz
-persistent keyIsDown secs keyCode keyCode2 
+function [rt, response1, response2] = collectResponse(w, cx, cy, t0)
 
-oldTextSize = Screen('TextSize', w , 20);
+persistent secs
 
-
-responseSet1 = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
-responseSet2 = {'z', 'n'};
-responseSetCodes1 = KbName(responseSet1);
-responseSetCodes2 = KbName(responseSet2);
-
-keyIsDown = true;
-while keyIsDown
-    [keyIsDown, ~, keyCode] = KbCheck();
-end
-
-DrawFormattedText(w, 'First letter', 'center', cy-150, [0 0 0]);
-Screen('Flip', w, 0);
-
-
+response1 = '';
+response2 = '';
 done = false;
 while ~done
-    [keyIsDown, secs, keyCode] = KbCheck();
-    if keyIsDown && sum(keyCode)==1 	% only a single key pressed
-        if any(keyCode(responseSetCodes1))
+
+    rectWidth = 420;
+    rectHeight = 300;
+    
+    rectangles = [
+        cx - rectWidth, cy+50, cx-100, cy + rectHeight;  % Rectangle 1
+        cx - rectWidth, cy - rectHeight, cx-100, cy-50;  % Rectangle 2
+        cx+100, cy+50, cx + rectWidth, cy + rectHeight;  % Rectangle 3 
+        cx+100, cy - rectHeight, cx + rectWidth, cy-50    % Rectangle 4
+    ];
+    
+    colors = [
+        255, 0, 0; % Red
+        0, 255, 0; % Green
+        0, 0, 255; % Blue
+        255, 255, 0; % Yellow
+    ]; 
+    
+    names = {
+        'red';
+        'green';
+        'blue';
+        'yellow'
+    };
+    
+    centers = [
+        ((rectangles(1, 1) + rectangles(1, 3)) / 2) - 20, ((rectangles(1, 2) + rectangles(1, 4)) / 2) - 10;
+        ((rectangles(2, 1) + rectangles(2, 3)) / 2) - 30, ((rectangles(2, 2) + rectangles(2, 4)) / 2) - 20; % Center of Rectangle 2
+        ((rectangles(3, 1) + rectangles(3, 3)) / 2) - 20 , ((rectangles(3, 2) + rectangles(3, 4)) / 2) - 10; % Center of Rectangle 3
+        ((rectangles(4, 1) + rectangles(4, 3)) / 2) - 30, ((rectangles(4, 2) + rectangles(4, 4)) / 2) - 20; % Center of Rectangle 4
+    ];
+    
+    for i = 1:size(rectangles, 1)
+        rectPosition = rectangles(i, :);
+        center = centers(i, :);
+        text = names{i};
+        Screen('FillRect', w, [0 0 0], rectPosition);
+        Screen('TextSize', w, 20);
+        Screen('DrawText', w, text, center(1), center(2), [255 255 255]);
+    end
+
+    Screen('DrawText', w, 'first adjective', cx-100, cy-400, [255 255 255]);
+    Screen('Flip', w, 0);
+
+    % Get mouse coordinates
+    [clicks,mousex,mousey,buttons,secs] = GetClicks(w);
+    
+    % Check if the mouse is inside any rectangle and button is pressed
+    for i = 1:size(rectangles, 1)
+        if IsInRect(mousex, mousey, rectangles(i, :)) && any(buttons)
             rt = secs - t0;
-            response = KbName(keyCode);
-            % adjust for German keyboard
-            if upper(response) == 'Z'
-                response = 'Y';
-            elseif upper(response) == 'Y'
-                response = 'Z';
+            switch i
+                case 1
+                    response1 = 'red';
+                case 2
+                    response1 = 'green';
+                case 3
+                    response1 = 'blue';
+                case 4
+                    response1 = 'yellow';
             end
-            DrawFormattedText(w, 'First letter', 'center', cy-150, [0 0 0]);
-            Screen('DrawText', w, upper(response), cx, cy-100);
-            DrawFormattedText(w, 'X present (y/n)', 'center', cy+50, [0 0 0])
-            Screen('Flip', w);
             done = true;
         end
     end
+
 end
 
-keyIsDown = true;
-while keyIsDown
-    [keyIsDown, ~, keyCode2] = KbCheck();
-end
 
 done = false;
 while ~done
-    [keyIsDown, ~, keyCode2] = KbCheck();
-    if keyIsDown && sum(keyCode2)==1 % only a single key pressed
-        if any(keyCode2(responseSetCodes2))
-            % rt = secs - t0;
-            response2 = KbName(keyCode2);
-            % adjust for German keyboard
-            if upper(response2) == 'Z'
-                response2 = 'Y';
-            elseif upper(response2) == 'Y'
-                response2 = 'Z';
+
+    rectWidth = 420;
+    rectHeight = 300;
+    
+    rectangles = [
+        cx - rectWidth, cy+50, cx-100, cy + rectHeight;  % Rectangle 1
+        cx - rectWidth, cy - rectHeight, cx-100, cy-50;  % Rectangle 2
+        cx+100, cy+50, cx + rectWidth, cy + rectHeight;  % Rectangle 3 
+        cx+100, cy - rectHeight, cx + rectWidth, cy-50    % Rectangle 4
+    ];
+    
+    colors = [
+        255, 0, 0; % Red
+        0, 255, 0; % Green
+        0, 0, 255; % Blue
+        255, 255, 0; % Yellow
+    ]; 
+    
+    names = {
+        'red';
+        'green';
+        'blue';
+        'yellow'
+    };
+    
+    centers = [
+        ((rectangles(1, 1) + rectangles(1, 3)) / 2) - 20, ((rectangles(1, 2) + rectangles(1, 4)) / 2) - 10;
+        ((rectangles(2, 1) + rectangles(2, 3)) / 2) - 30, ((rectangles(2, 2) + rectangles(2, 4)) / 2) - 20; % Center of Rectangle 2
+        ((rectangles(3, 1) + rectangles(3, 3)) / 2) - 20 , ((rectangles(3, 2) + rectangles(3, 4)) / 2) - 10; % Center of Rectangle 3
+        ((rectangles(4, 1) + rectangles(4, 3)) / 2) - 30, ((rectangles(4, 2) + rectangles(4, 4)) / 2) - 20; % Center of Rectangle 4
+    ];
+    
+    for i = 1:size(rectangles, 1)
+        rectPosition = rectangles(i, :);
+        center = centers(i, :);
+        text = names{i};
+        Screen('FillRect', w, [0 0 0], rectPosition);
+        Screen('TextSize', w, 20);
+        Screen('DrawText', w, text, center(1), center(2), [255 255 255]);
+    end
+
+    Screen('DrawText', w, 'second adjective', cx-100, cy-400, [255 255 255]);
+    Screen('Flip', w, 0);
+
+    % Get mouse coordinates
+    [clicks,mousex,mousey,buttons,secs] = GetClicks(w);
+    
+    % Check if the mouse is inside any rectangle and button is pressed
+    for i = 1:size(rectangles, 1)
+        if IsInRect(mousex, mousey, rectangles(i, :)) && any(buttons)
+            rt = secs - t0;
+            switch i
+                case 1
+                    response2 = 'red';
+                case 2
+                    response2 = 'green';
+                case 3
+                    response2 = 'blue';
+                case 4
+                    response2 = 'yellow';
             end
             done = true;
         end
     end
-
 end
-
-DrawFormattedText(w, 'First letter', 'center', cy-150, [0 0 0]);
-Screen('DrawText', w, upper(response), cx, cy-100);
-DrawFormattedText(w, 'X present (y/n)', 'center', cy+50, [0 0 0])
-Screen('DrawText', w, upper(response2), cx, cy+100);
-Screen('Flip', w);
-
-Screen('TextSize', w , oldTextSize);
-WaitSecs(.5);
-
