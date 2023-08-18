@@ -1,1 +1,0 @@
-function [ISI, ISIafterFix, Fix, Stim] = DetermineTime
