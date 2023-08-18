@@ -17,7 +17,7 @@ function times = drawAndPresentStimulus(w, screens, const, times, rsvp, t1Pos, t
 
 % self-paced: trial starts after space bar
 
-waitForSpaceKey();
+%waitForSpaceKey();
 
 deltat = 1/120;
 stimRect = CenterRect([0 0 64 64], Screen('Rect', w));

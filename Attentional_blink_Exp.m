@@ -1,6 +1,7 @@
-% Attentional blink experiment
-PsychDebugWindowConfiguration
+      % Attentional blink experiment
+%PsychDebugWindowConfiguration
 Screen('Preference', 'SkipSyncTests', 2);
+
 try
 	addpath('functions');
 	KbName('UnifyKeyNames');
@@ -23,9 +24,6 @@ try
 
 	[cx, cy] = RectCenter(const.srect);
 
-	ESC = KbName('ESCAPE');
-	keyCode = zeros(1,256);
-
 	% timings
 	% 	Raymond / Shapiro 
 	times.ISI = 0.075;
@@ -35,47 +33,54 @@ try
 
     showInstructions(w, const, 'material/instructions.txt');
 
+    exit = false;
+
 	for trial = 1:NTRIALS
-        % ====================
-		% = specify Stimulus =
-		% ====================
-        t1 = design.color_T1(trial);
-        t2 = design.color_T2(trial);
-		t1Pos = design.PosT1(trial);
-		t2Pos = design.PosT2(trial);
-		t1congruent = design.congruence(trial);
-
-        %generating rsvp with target1, target2, their positions and fillers
-		[rsvp, T1, T2] = generateRSVPstream(t1, t1Pos, t2, t2Pos, 'material/fillers.txt');
-
-		% =================
-		% = draw stimulus =
-		% =================
-
-		times = drawAndPresentStimulus(w, screens, const, times, rsvp, t1Pos, t2Pos, t1congruent);
-
-		% ==============================
-		% = collect and score response =
-		% ==============================
-		tTargetDeadline = 1.500;
-		% fprintf(1, '\n calling collectResponse\n')
-		correct1 = 0;
-		correct2 = 0;
-
-		[rt, R1, R2] = collectResponse(w, cx, cy, times.t3);
-        Screen('FillRect', w, const.bgcolor);
-		Screen('Flip', w);
-
-        design.R1(trial) = (R1);
-        design.R2(trial) = (R2);
-        if isequal(R1, T1)
-		    design.correct1(trial) = 1;
-        end
-        if isequal(R2, T2)
-            design.correct2(trial) = 1;
-        end
-		writetable(design, resultFileName, 'Delimiter','\t');		
-	end
+        instruction = WaitForInstruction();
+        if isequal(instruction, 'kill')
+            break                         
+        else
+            % ====================
+		    % = specify Stimulus =
+		    % ====================
+            t1 = design.color_T1(trial);
+            t2 = design.color_T2(trial);
+		    t1Pos = design.PosT1(trial);
+		    t2Pos = design.PosT2(trial);
+		    t1congruent = design.congruence(trial);
+    
+            %generating rsvp with target1, target2, their positions and fillers
+		    [rsvp, T1, T2] = generateRSVPstream(t1, t1Pos, t2, t2Pos, 'material/fillers.txt');
+    
+		    % =================       
+		    % = draw stimulus =
+		    % =================
+    
+		    times = drawAndPresentStimulus(w, screens, const, times, rsvp, t1Pos, t2Pos, t1congruent);
+    
+		    % ==============================
+		    % = collect and score response =
+		    % ==============================
+		    tTargetDeadline = 1.500;
+		    % fprintf(1, '\n calling collectResponse\n')
+		    correct1 = 0;
+		    correct2 = 0;
+    
+		    [rt, R1, R2] = collectResponse(w, cx, cy, times.t3);
+            Screen('FillRect', w, const.bgcolor);
+		    Screen('Flip', w);
+    
+            design.R1(trial) = (R1);
+            design.R2(trial) = (R2);
+            if isequal(R1, T1)
+		        design.correct1(trial) = 1;
+            end
+            if isequal(R2, T2)
+                design.correct2(trial) = 1;
+            end
+		    writetable(design, resultFileName, 'Delimiter','\t');	
+        end 
+    end
 	Priority(0);
 	Screen('CloseAll')
 	ListenChar(1);
@@ -86,4 +91,3 @@ catch
 	Screen('CloseAll');
     rethrow(lasterror);
 end
-
