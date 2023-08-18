@@ -41,10 +41,11 @@ while ~done
     for i = 1:size(rectangles, 1)
         rectPosition = rectangles(i, :);
         center = centers(i, :);
+        color = colors(i, :);
         text = names{i};
-        Screen('FillRect', w, [0 0 0], rectPosition);
+        Screen('FillRect', w, color, rectPosition);
         Screen('TextSize', w, 20);
-        Screen('DrawText', w, text, center(1), center(2), [255 255 255]);
+        Screen('DrawText', w, text, center(1), center(2), [0 0 0]);
     end
 
     Screen('DrawText', w, 'first adjective', cx-100, cy-400, [255 255 255]);
@@ -110,11 +111,12 @@ while ~done
     
     for i = 1:size(rectangles, 1)
         rectPosition = rectangles(i, :);
+        color = colors(i, :);
         center = centers(i, :);
         text = names{i};
-        Screen('FillRect', w, [0 0 0], rectPosition);
+        Screen('FillRect', w, color, rectPosition);
         Screen('TextSize', w, 20);
-        Screen('DrawText', w, text, center(1), center(2), [255 255 255]);
+        Screen('DrawText', w, text, center(1), center(2), [0 0 0]);
     end
 
     Screen('DrawText', w, 'second adjective', cx-100, cy-400, [255 255 255]);

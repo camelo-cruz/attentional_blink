@@ -1,5 +1,5 @@
 % Attentional blink experiment
-%PsychDebugWindowConfiguration
+PsychDebugWindowConfiguration
 Screen('Preference', 'SkipSyncTests', 2);
 try
 	addpath('functions');
@@ -46,7 +46,7 @@ try
 		t1congruent = design.congruence(trial);
 
         %generating rsvp with target1, target2, their positions and fillers
-		[rsvp, T1] = generateRSVPstream(t1, t1Pos, t2, t2Pos, 'material/fillers.txt');
+		[rsvp, T1, T2] = generateRSVPstream(t1, t1Pos, t2, t2Pos, 'material/fillers.txt');
 
 		% =================
 		% = draw stimulus =
@@ -65,12 +65,15 @@ try
 		[rt, R1, R2] = collectResponse(w, cx, cy, times.t3);
         Screen('FillRect', w, const.bgcolor);
 		Screen('Flip', w);
-% Here not worked----------------------------------------------
+
         design.R1(trial) = (R1);
         design.R2(trial) = (R2);
-		design.correct1(trial) = strcmp((R1), (T1));
-		design.correct2(trial) = ...
-            (t1congruent & strcmp((R2), 'Y')) | (~t1congruent & strcmp((R2), 'N'));
+        if isequal(R1, T1)
+		    design.correct1(trial) = 1;
+        end
+        if isequal(R2, T2)
+            design.correct2(trial) = 1;
+        end
 		writetable(design, resultFileName, 'Delimiter','\t');		
 	end
 	Priority(0);

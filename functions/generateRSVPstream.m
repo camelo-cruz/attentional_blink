@@ -1,10 +1,9 @@
-function [rsvp, T1] = generateRSVPstream(t1, t1Pos, t2, t2Pos, fillers)
+function [rsvp, T1, T2] = generateRSVPstream(t1, t1Pos, t2, t2Pos, fillers)
 
 	streamLength = 18;
 
 	rsvp = {};
 
-	% if we want to play with the target set, we can do so here
     fillers = fileread(fillers);
     fillers = strsplit(fillers);
 
@@ -16,6 +15,7 @@ function [rsvp, T1] = generateRSVPstream(t1, t1Pos, t2, t2Pos, fillers)
     rsvp(t1Pos) = t1(1);
     rsvp(t2Pos) = t2(1);
 
-    rsvp = string(rsvp)
+    rsvp = string(rsvp);
 
-    T1 = t1;
+    T1 = t1{1};
+    T2 = t2{1};

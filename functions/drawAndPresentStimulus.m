@@ -1,4 +1,4 @@
-function times = drawAndPresentStimulus(w, screens, const, times, rsvp, t1Pos, t2Pos, congruence);
+function times = drawAndPresentStimulus(w, screens, const, times, rsvp, t1Pos, t2Pos, congruence)
 %FUNCTION times = drawAndPresentStimulus(w, screens, const, times, rsvp, t1Pos);
 %
 % w: window pointer to main screen
