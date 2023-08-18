@@ -2,6 +2,8 @@ function [rt, response1, response2] = collectResponse(w, cx, cy, t0)
 
 persistent secs
 
+oldTextSize = Screen('TextSize', w , 20);
+
 response1 = '';
 response2 = '';
 done = false;
@@ -143,3 +145,6 @@ while ~done
         end
     end
 end
+
+Screen('TextSize', w , oldTextSize);
+WaitSecs(.5);

@@ -1,7 +1,7 @@
 t2lag	color_T1	color_T2	congruence	PosT1	PosT2	trialNo	R1	R2	correct1	correct2
-5	yellow	blue	0	9	14	1	red	yellow	0	0
-2	green	yellow	0	4	6	2	blue	red	0	0
-2	green	red	1	8	10	3			0	0
+5	yellow	blue	0	9	14	1	blue	green	0	0
+2	green	yellow	0	4	6	2	red	yellow	0	1
+2	green	red	1	8	10	3	red	blue	0	0
 8	yellow	green	0	7	15	4			0	0
 6	red	yellow	1	9	15	5			0	0
 4	yellow	red	1	6	10	6			0	0

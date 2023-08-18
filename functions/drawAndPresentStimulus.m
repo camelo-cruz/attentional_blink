@@ -85,7 +85,7 @@ colors = [
     colorlist = [colorlist; randomColor];
         
 
-	if i == t1Pos
+	 if i == t1Pos
         if congruence
             colorlist = [colorlist; color1];
 		    Screen('DrawText', w, double(rsvp{i}), xchr, ychr, colorlist(end, :), const.bgcolor);
