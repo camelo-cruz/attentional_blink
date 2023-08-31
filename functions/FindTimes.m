@@ -42,8 +42,6 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
 
 
         t1pos = randi([4, 9]);
-        t2pos = randi([4, 9]);
-        t2 = rsvp{t2pos};
         T1 = rsvp{t1pos};
 
         %---------------------------------------------
@@ -71,13 +69,6 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
         colorlist = [];
         for i = 2:length(rsvp)
             
-        colors = [
-            0   255 0;     % Green
-            255 255 0;     % Yellow
-            0   0   255;   % Blue
-            255 0   0      % Red
-        ];
-
         randomColor = generateColor();
 
         if ~isempty(colorlist) && isequal(randomColor, colorlist(end, :))
@@ -88,20 +79,17 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
     
         colorlist = [colorlist; randomColor];
 
-        if length(colorlist) >= 2 && isequal(colorlist(end - 1), colorlist(end))
-            randomColor = generateColor();
-            colorlist = [colorlist; randomColor];
-        end
-
-        t1color = colorlist(end, :);
-        if isequal(t1color, [255, 0, 0])
-            t1color = 'red';
-        elseif isequal(t1color, [0, 255, 0])
-            t1color = 'green';
-        elseif isequal(t1color, [0, 0, 255])
-            t1color = 'blue';
-        elseif isequal(t1color, [255, 255, 0])
-            t1color = 'yellow';
+        if isequal(i, t1pos)
+            t1color = colorlist(end, :);
+            if isequal(t1color, [255, 0, 0])
+                t1color = 'red';
+            elseif isequal(t1color, [0, 255, 0])
+                t1color = 'green';
+            elseif isequal(t1color, [0, 0, 255])
+                t1color = 'blue';
+            elseif isequal(t1color, [255, 255, 0])
+                t1color = 'yellow';
+            end
         end
 
         Screen('DrawText', w, double(rsvp{i}), xchr, ychr, colorlist(end, :), const.bgcolor);
@@ -111,7 +99,7 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
         end
 
         Screen('FillRect', w, const.bgcolor, stimRect);
-        t3 = Screen('Flip', w, t2s(end) + presentationTime - deltat);
+        %t3 = Screen('Flip', w, t2s(end) + presentationTime - deltat);
         correct1 = 0;
         correct2 = 0;
 
@@ -161,11 +149,11 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
                 text = names{i};
                 Screen('FillRect', w, color, rectPosition);
                 Screen('TextSize', w, 20);
-                Screen('DrawText', w, text, center(1), center(2), [0 0 0]);
+                Screen('DrawText', w, double(text), center(1), center(2), [0 0 0]);
             end
 
             display_text = ['color of ', T1];
-            Screen('DrawText', w, display_text, cx-100, cy-400, [255 255 255]);
+            Screen('DrawText', w, double(display_text), cx-100, cy-400, [255 255 255]);
             Screen('Flip', w, 0);
         
             % Get mouse coordinates
