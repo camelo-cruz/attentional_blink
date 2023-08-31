@@ -1,6 +1,5 @@
 function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
 
-    persistent secs
     % Initialize QUEST parameters
     initialGuess = 0.015;  % Initial guess for reading speed
     initialSD = 2;         % Initial standard deviation
@@ -9,7 +8,7 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
     delta = 0.01;          % Lapse rate
     gamma=0.5;
     
-    % Initialize QUEST structure
+    % Initialize QUEST
     q = QuestCreate(initialGuess, initialSD, pThreshold, beta, delta, gamma);
     
     
@@ -20,14 +19,9 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
     % Number of trials
     numTrials = 50;
 
-    % Get the current stimulus intensity from QUEST
-    
-    % Calculate presentation time based on current intensity
-    
-
-
     for trial = 1:numTrials
         try
+        % get current presentation times (for current trial)
         tTest=QuestQuantile(q);
         presentationTime = max(minPresentationTime, min(maxPresentationTime, tTest));
 
@@ -37,49 +31,50 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
         fillers = fileread('material/fillers.txt');
         fillers = strsplit(fillers);
 
-	    for j = 1:streamLength
+        for j = 1:streamLength
 		    rsvp(j) = fillers(randi(numel(fillers)));
         end
-
 
         t1pos = randi([4, 9]);
         T1 = rsvp{t1pos};
 
         %---------------------------------------------
+
         deltat = 1/120;
         stimRect = CenterRect([0 0 64 64], Screen('Rect', w));
         xchr = const.cx - const.letterWidth/2;
         ychr = const.cy - const.letterHeight/3;
         
-        dx = .3 * const.ppd(1);
-        dy = .3 * const.ppd(2);
-        
+        %present fixation cross
         Screen('DrawTexture', w, screens.fixation);
         t0 = Screen('Flip', w);
         
         Screen('FillRect', w, const.bgcolor, stimRect);
         t1 = Screen('Flip', w, t0 + times.Fix);
-        
+
+        %present first word in black
         Screen('FillRect', w, const.bgcolor, stimRect);
         DrawFormattedText(w, double(rsvp{1}), 'center', 'center', [0 0 0], [], [], [], [], [], [xchr, ychr, xchr, ychr]);
 
-        
         t2s = NaN*ones(length(rsvp)+1, 1);
         t2s(1) = Screen('Flip', w, t1 + times.ISIafterFix);
         cnt = 1;
 
+        %create color list for assigning colors to each word
         colorlist = [];
         for index = 2:length(rsvp)
         randomColor = generateColor();
 
+        %check that no color is repeated
         if ~isempty(colorlist) && isequal(randomColor, colorlist(end, :))
            while isequal(randomColor, colorlist(end, :))
                randomColor = generateColor();
            end
         end
-    
         colorlist = [colorlist; randomColor];
 
+        % if index is target index:
+        % store color of target to check with answer
         if isequal(index, t1pos)
             t1color = colorlist(end, :);
             if isequal(t1color, [255, 0, 0])
@@ -93,20 +88,20 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
             end
         end
 
+        %present stimuli
         DrawFormattedText(w, double(rsvp{index}), 'center', 'center', colorlist(end, :), [], [], [], [], [], [xchr, ychr, xchr, ychr]);
         t2s(cnt+1) = Screen('Flip', w, t2s(cnt) +  presentationTime - deltat);
         t2s(cnt+2) = Screen('Flip', w, t2s(cnt+1) + times.ISI- deltat);
         cnt = cnt + 2;
         end
+
         Screen('FillRect', w, const.bgcolor, stimRect);
-        t3 = Screen('Flip', w, t2s(end) + presentationTime - deltat);
-        correct1 = 0;
-
+        Screen('Flip', w, t2s(end) + presentationTime - deltat);
+        
         %collecting response
-
         oldTextSize = Screen('TextSize', w , 20);
-
         response = '';
+        
         done = false;
         while ~done
         
@@ -156,12 +151,11 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
             Screen('Flip', w, 0);
         
             % Get mouse coordinates
-            [clicks, mousex,mousey,buttons,secs] = GetClicks(w);
+            [~, mousex,mousey,buttons,~] = GetClicks(w);
             
             % Check if the mouse is inside any rectangle and button is pressed
             for i = 1:size(rectangles, 1)
                 if IsInRect(mousex, mousey, rectangles(i, :)) && any(buttons)
-                    rt = secs - t0;
                     switch i
                         case 1
                             response = 'red';
@@ -177,24 +171,30 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
             end
         end
 
-    if isequal(t1color, response)
-        response = 1;
-    else
-        response = 0;
-    end
+        % check if response is correct
+        if isequal(t1color, response)
+            response = 1;
+        else
+            response = 0;
+        end
+    
+        %update quest structure for use in next trial
+        q=QuestUpdate(q,tTest,response);
+        Screen('TextSize', w , oldTextSize);
+        WaitSecs(.5);
 
-    q=QuestUpdate(q,tTest,response);
-    Screen('TextSize', w , oldTextSize);
-    WaitSecs(.5);
-        catch ME
+
         % Some error occurred if you get here.
+        catch ME
         errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
         ME.stack(1).name, ME.stack(1).line, ME.message);
         fprintf(1, '%s\n', errorMessage);
         uiwait(warndlg(errorMessage));
         end
+
     end
     % Analyze QUEST results to get the estimated threshold
+    % This is going to be, after 50 trials, presentation time of stimuli
     estimatedThreshold = QuestMean(q);
     estimatedThreshold = max(minPresentationTime, min(maxPresentationTime, estimatedThreshold));
 

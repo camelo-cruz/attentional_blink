@@ -1,1 +1,8 @@
-This is the QUEST algorithm
+Welcome to the experiment!
+
+In this first round you are going to see groups of 18 words, each word with one different color.
+After each group, you are asked to report the color of a randomly chosen word!
+
+The experiment will start after this first familiarization trial. 
+
+Please use the space bar to start this first block.

@@ -1,5 +1,5 @@
 % Attentional blink experiment
-%PsychDebugWindowConfiguration
+PsychDebugWindowConfiguration
 Screen('Preference', 'SkipSyncTests', 2);
 
 try
@@ -30,13 +30,16 @@ try
     
     %----------------Quest for finding best presentation time--------------
     % timings
-	% 	Raymond / Shapiro
-
+	% first taken from Raymond / Shapiro
+    % times.Stim (Presentation time) is going to be rewritten
+    % After use of quest algorithm
 	times.ISI = 0.075;
 	times.ISIafterFix = 0.000;
 	times.Fix = 0.600;
     times.Stim = 0.015;
 
+    % Presentation of Quest starting experiment
+    % Presentation time is estimated with quest and used in main experiment
     showInstructions(w, const, 'material/quest.txt');
     times.Stim = FindTimes(w, screens, const, times, cx, cy);
     
@@ -46,6 +49,7 @@ try
     exit = false;
     for trial = 1:NTRIALS
         instruction = WaitForInstruction();
+        %program can be exited before starting a trial
         if isequal(instruction, 'kill')
             break                         
         else
@@ -81,6 +85,9 @@ try
     
             design.R1(trial) = (R1);
             design.R2(trial) = (R2);
+
+            % Writing correctness of answer in design
+
             if isequal(R1, T1)
 		        design.correct1(trial) = 1;
             end
