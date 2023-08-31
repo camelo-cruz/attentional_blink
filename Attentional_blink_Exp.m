@@ -1,4 +1,10 @@
 % Attentional blink experiment
+%--------Personal Data------------
+
+% Author: Alejandra Camelo Cruz
+% Matrikelnummer: 800385
+
+%---------------------------------
 PsychDebugWindowConfiguration
 Screen('Preference', 'SkipSyncTests', 2);
 
