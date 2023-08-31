@@ -1,8 +1,8 @@
 function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
 
     % Initialize QUEST parameters
-    initialGuess = 0.015;  % Initial guess for reading speed
-    initialSD = 2;         % Initial standard deviation
+    initialGuess = 0.150;  % Initial guess for reading speed
+    initialSD = 5;         % Initial standard deviation
     pThreshold = 0.82;     % Probability of correct response
     beta = 3.5;            % Slope of the psychometric function
     delta = 0.01;          % Lapse rate
@@ -193,6 +193,7 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
         end
 
     end
+    
     % Analyze QUEST results to get the estimated threshold
     % This is going to be, after 50 trials, presentation time of stimuli
     estimatedThreshold = QuestMean(q);

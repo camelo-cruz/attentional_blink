@@ -36,7 +36,7 @@ try
 	times.ISI = 0.075;
 	times.ISIafterFix = 0.000;
 	times.Fix = 0.600;
-    times.Stim = 0.015;
+    times.Stim = 0; %starts with 0, and it's found by quest
 
     % Presentation of Quest starting experiment
     % Presentation time is estimated with quest and used in main experiment
