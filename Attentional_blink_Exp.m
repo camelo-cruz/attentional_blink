@@ -1,5 +1,5 @@
 % Attentional blink experiment
-%PsychDebugWindowConfiguration
+PsychDebugWindowConfiguration
 Screen('Preference', 'SkipSyncTests', 2);
 
 try
@@ -27,18 +27,24 @@ try
 
     %finding screen center and display instructions
 	[cx, cy] = RectCenter(const.srect);
-    showInstructions(w, const, 'material/instructions.txt');
+    
 
 
-    %---------------------implement here quest------------------
+    %----------------Quest for finding best presentation time--------------
     % timings
-	% 	Raymond / Shapiro 
+	% 	Raymond / Shapiro
+
 	times.ISI = 0.075;
 	times.ISIafterFix = 0.000;
 	times.Fix = 0.600;
-	times.Stim = 0.015;
-    %-----------------------------------------------------------
+    times.Stim = 0.015;
 
+    showInstructions(w, const, 'material/quest.txt');
+    times.Stim = FindTimes(w, screens, const, times, cx, cy);
+
+
+    %----------------------Experiment starts here--------------------------
+    showInstructions(w, const, 'material/instructions.txt');
     %Loop for stimuli presentation
     exit = false;
     for trial = 1:NTRIALS
