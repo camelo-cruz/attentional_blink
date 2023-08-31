@@ -51,7 +51,7 @@ try
         instruction = WaitForInstruction();
         %program can be exited before starting a trial
         if isequal(instruction, 'kill')
-            break                         
+             break                         
         else
             % ====================
 		    % = specify Stimuli =
@@ -87,7 +87,6 @@ try
             design.R2(trial) = (R2);
 
             % Writing correctness of answer in design
-
             if isequal(R1, T1)
 		        design.correct1(trial) = 1;
             end
