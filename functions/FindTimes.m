@@ -2,11 +2,11 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
 
     persistent secs
     % Initialize QUEST parameters
-    initialGuess = 0.300;  % Initial guess for reading speed
-    initialSD = 1;     % Initial standard deviation
-    pThreshold = 0.82;   % Probability of correct response
-    beta = 3.5;          % Slope of the psychometric function
-    delta = 0.01;        % Lapse rate
+    initialGuess = 0.015;  % Initial guess for reading speed
+    initialSD = 2;         % Initial standard deviation
+    pThreshold = 0.82;     % Probability of correct response
+    beta = 3.5;            % Slope of the psychometric function
+    delta = 0.01;          % Lapse rate
     gamma=0.5;
     
     % Initialize QUEST structure
@@ -27,6 +27,7 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
 
 
     for trial = 1:numTrials
+        try
         tTest=QuestQuantile(q);
         presentationTime = max(minPresentationTime, min(maxPresentationTime, tTest));
 
@@ -36,8 +37,8 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
         fillers = fileread('material/fillers.txt');
         fillers = strsplit(fillers);
 
-	    for i = 1:streamLength
-		    rsvp(i) = fillers(randi(numel(fillers)));
+	    for j = 1:streamLength
+		    rsvp(j) = fillers(randi(numel(fillers)));
         end
 
 
@@ -60,15 +61,15 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
         t1 = Screen('Flip', w, t0 + times.Fix);
         
         Screen('FillRect', w, const.bgcolor, stimRect);
-        Screen('DrawText', w, double(rsvp{1}), xchr, ychr, [0 0 0], const.bgcolor);
+        DrawFormattedText(w, double(rsvp{1}), 'center', 'center', [0 0 0], [], [], [], [], [], [xchr, ychr, xchr, ychr]);
+
         
         t2s = NaN*ones(length(rsvp)+1, 1);
         t2s(1) = Screen('Flip', w, t1 + times.ISIafterFix);
         cnt = 1;
-        
+
         colorlist = [];
-        for i = 2:length(rsvp)
-            
+        for index = 2:length(rsvp)
         randomColor = generateColor();
 
         if ~isempty(colorlist) && isequal(randomColor, colorlist(end, :))
@@ -79,7 +80,7 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
     
         colorlist = [colorlist; randomColor];
 
-        if isequal(i, t1pos)
+        if isequal(index, t1pos)
             t1color = colorlist(end, :);
             if isequal(t1color, [255, 0, 0])
                 t1color = 'red';
@@ -92,18 +93,16 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
             end
         end
 
-        Screen('DrawText', w, double(rsvp{i}), xchr, ychr, colorlist(end, :), const.bgcolor);
+        DrawFormattedText(w, double(rsvp{index}), 'center', 'center', colorlist(end, :), [], [], [], [], [], [xchr, ychr, xchr, ychr]);
         t2s(cnt+1) = Screen('Flip', w, t2s(cnt) +  presentationTime - deltat);
         t2s(cnt+2) = Screen('Flip', w, t2s(cnt+1) + times.ISI- deltat);
         cnt = cnt + 2;
         end
-
         Screen('FillRect', w, const.bgcolor, stimRect);
-        %t3 = Screen('Flip', w, t2s(end) + presentationTime - deltat);
+        t3 = Screen('Flip', w, t2s(end) + presentationTime - deltat);
         correct1 = 0;
-        correct2 = 0;
 
-    %collecting response
+        %collecting response
 
         oldTextSize = Screen('TextSize', w , 20);
 
@@ -184,17 +183,23 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
         response = 0;
     end
 
-    q=QuestUpdate(q,tTest,1);
+    q=QuestUpdate(q,tTest,response);
     Screen('TextSize', w , oldTextSize);
     WaitSecs(.5);
-
+        catch ME
+        % Some error occurred if you get here.
+        errorMessage = sprintf('Error in function %s() at line %d.\n\nError Message:\n%s', ...
+        ME.stack(1).name, ME.stack(1).line, ME.message);
+        fprintf(1, '%s\n', errorMessage);
+        uiwait(warndlg(errorMessage));
+        end
     end
     % Analyze QUEST results to get the estimated threshold
     estimatedThreshold = QuestMean(q);
     estimatedThreshold = max(minPresentationTime, min(maxPresentationTime, estimatedThreshold));
+
+    Screen('FillRect', w, const.bgcolor);
     
     
-    % Close any open Psychtoolbox windows
-    %Screen('CloseAll');
 
 
