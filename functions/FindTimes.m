@@ -163,8 +163,9 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
                 Screen('TextSize', w, 20);
                 Screen('DrawText', w, text, center(1), center(2), [0 0 0]);
             end
-        
-            Screen('DrawText', w, 'first adjective', cx-100, cy-400, [255 255 255]);
+
+            display_text = ['color of ', T1];
+            Screen('DrawText', w, display_text, cx-100, cy-400, [255 255 255]);
             Screen('Flip', w, 0);
         
             % Get mouse coordinates
@@ -195,7 +196,7 @@ function estimatedThreshold = FindTimes(w, screens, const, times, cx, cy)
         response = 0;
     end
 
-    q=QuestUpdate(q,tTest,response);
+    q=QuestUpdate(q,tTest,1);
     Screen('TextSize', w , oldTextSize);
     WaitSecs(.5);
 
