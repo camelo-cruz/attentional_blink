@@ -3,8 +3,7 @@ Welcome to our experiment!
 
 On each trial you will see a number of adjectives in rapid serial presentation. Two of the adjectives, adjectives of color names, are the "targets", which you are to report at the end of the trial.
 
-Your task is to (1) report the first color adjective, and (2) report the second color adjective.
+Your task is to (1) report the color of the first color word, and (2) report the color of the second color word.
 
-Remember that your task is to report the words and not the colors in which they are presented.
 
 You can start each trials with a press of the space bar.
