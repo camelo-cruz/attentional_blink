@@ -5,7 +5,8 @@
 % Matrikelnummer: 800385
 
 %---------------------------------
-PsychDebugWindowConfiguration
+
+PsychDebugWindowConfiguration %hide this line to see full display mode
 Screen('Preference', 'SkipSyncTests', 2);
 
 try
